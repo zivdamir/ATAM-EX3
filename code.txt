@@ -1,0 +1,142 @@
+
+prog:     file format elf64-x86-64
+
+
+Disassembly of section .init:
+
+0000000000400478 <_init>:
+  400478:	48 83 ec 08          	sub    $0x8,%rsp
+  40047c:	48 8b 05 75 2b 20 00 	mov    0x202b75(%rip),%rax        # 602ff8 <__gmon_start__>
+  400483:	48 85 c0             	test   %rax,%rax
+  400486:	74 05                	je     40048d <_init+0x15>
+  400488:	e8 53 00 00 00       	callq  4004e0 <__gmon_start__@plt>
+  40048d:	48 83 c4 08          	add    $0x8,%rsp
+  400491:	c3                   	retq   
+
+Disassembly of section .plt:
+
+00000000004004a0 <.plt>:
+  4004a0:	ff 35 62 2b 20 00    	pushq  0x202b62(%rip)        # 603008 <_GLOBAL_OFFSET_TABLE_+0x8>
+  4004a6:	ff 25 64 2b 20 00    	jmpq   *0x202b64(%rip)        # 603010 <_GLOBAL_OFFSET_TABLE_+0x10>
+  4004ac:	0f 1f 40 00          	nopl   0x0(%rax)
+
+00000000004004b0 <puts@plt>:
+  4004b0:	ff 25 62 2b 20 00    	jmpq   *0x202b62(%rip)        # 603018 <puts@GLIBC_2.2.5>
+  4004b6:	68 00 00 00 00       	pushq  $0x0
+  4004bb:	e9 e0 ff ff ff       	jmpq   4004a0 <.plt>
+
+00000000004004c0 <printf@plt>:
+  4004c0:	ff 25 5a 2b 20 00    	jmpq   *0x202b5a(%rip)        # 603020 <printf@GLIBC_2.2.5>
+  4004c6:	68 01 00 00 00       	pushq  $0x1
+  4004cb:	e9 d0 ff ff ff       	jmpq   4004a0 <.plt>
+
+00000000004004d0 <__libc_start_main@plt>:
+  4004d0:	ff 25 52 2b 20 00    	jmpq   *0x202b52(%rip)        # 603028 <__libc_start_main@GLIBC_2.2.5>
+  4004d6:	68 02 00 00 00       	pushq  $0x2
+  4004db:	e9 c0 ff ff ff       	jmpq   4004a0 <.plt>
+
+00000000004004e0 <__gmon_start__@plt>:
+  4004e0:	ff 25 4a 2b 20 00    	jmpq   *0x202b4a(%rip)        # 603030 <__gmon_start__>
+  4004e6:	68 03 00 00 00       	pushq  $0x3
+  4004eb:	e9 b0 ff ff ff       	jmpq   4004a0 <.plt>
+
+00000000004004f0 <__isoc99_scanf@plt>:
+  4004f0:	ff 25 42 2b 20 00    	jmpq   *0x202b42(%rip)        # 603038 <__isoc99_scanf@GLIBC_2.7>
+  4004f6:	68 04 00 00 00       	pushq  $0x4
+  4004fb:	e9 a0 ff ff ff       	jmpq   4004a0 <.plt>
+
+Disassembly of section .text:
+
+0000000000400500 <main>:
+  400500:	48 83 ec 18          	sub    $0x18,%rsp
+  400504:	bf 40 1d 40 00       	mov    $0x401d40,%edi
+  400509:	31 c0                	xor    %eax,%eax
+  40050b:	e8 b0 ff ff ff       	callq  4004c0 <printf@plt>
+  400510:	48 89 e6             	mov    %rsp,%rsi
+  400513:	bf 55 1d 40 00       	mov    $0x401d55,%edi
+  400518:	31 c0                	xor    %eax,%eax
+  40051a:	e8 d1 ff ff ff       	callq  4004f0 <__isoc99_scanf@plt>
+  40051f:	48 89 e7             	mov    %rsp,%rdi
+  400522:	e8 19 01 00 00       	callq  400640 <check_password>
+  400527:	85 c0                	test   %eax,%eax
+  400529:	75 11                	jne    40053c <main+0x3c>
+  40052b:	bf 78 1d 40 00       	mov    $0x401d78,%edi
+  400530:	e8 7b ff ff ff       	callq  4004b0 <puts@plt>
+  400535:	31 c0                	xor    %eax,%eax
+  400537:	48 83 c4 18          	add    $0x18,%rsp
+  40053b:	c3                   	retq   
+  40053c:	bf 58 1d 40 00       	mov    $0x401d58,%edi
+  400541:	e8 6a ff ff ff       	callq  4004b0 <puts@plt>
+  400546:	eb ed                	jmp    400535 <main+0x35>
+
+0000000000400548 <_start>:
+  400548:	31 ed                	xor    %ebp,%ebp
+  40054a:	49 89 d1             	mov    %rdx,%r9
+  40054d:	5e                   	pop    %rsi
+  40054e:	48 89 e2             	mov    %rsp,%rdx
+  400551:	48 83 e4 f0          	and    $0xfffffffffffffff0,%rsp
+  400555:	50                   	push   %rax
+  400556:	54                   	push   %rsp
+  400557:	49 c7 c0 20 1d 40 00 	mov    $0x401d20,%r8
+  40055e:	48 c7 c1 b0 1c 40 00 	mov    $0x401cb0,%rcx
+  400565:	48 c7 c7 00 05 40 00 	mov    $0x400500,%rdi
+  40056c:	e8 5f ff ff ff       	callq  4004d0 <__libc_start_main@plt>
+  400571:	f4                   	hlt    
+  400572:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+  400579:	00 00 00 
+  40057c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000
+
+
+
+0000000000400640 <check_password>:
+  400640:	0f b6 37             	movzbl (%rdi),%esi #rdi:= char* s, %esi:=*s;
+  400643:	40 80 fe 61          	cmp    $0x61,%sil #compare lowest char with 'a' #sil is current character
+  400647:	74 6f                	je     4006b8 <check_password+0x78> #return 0
+  400649:	40 84 f6             	test   %sil,%sil #check if current character is null terminator
+  40064c:	74 6d                	je     4006bb <check_password+0x7b> # if yes, jump 4006bb
+  40064e:	83 ee 61             	sub    $0x61,%esi *s-'a'
+  400651:	40 80 fe 19          	cmp    $0x19,%sil if(*s-'a'>25)
+  400655:	77 61                	ja     4006b8 <check_password+0x78> #return 0
+  400657:	40 0f b6 f6          	movzbl %sil,%esi # update current *s
+  40065b:	31 c9                	xor    %ecx,%ecx  # x=0 
+  40065d:	45 31 c9             	xor    %r9d,%r9d # r9d =0
+  400660:	41 b8 1a 00 00 00    	mov    $0x1a,%r8d #r8 has 26 (letters of alphabet)
+  400666:	eb 26                	jmp    40068e <check_password+0x4e> #
+  400668:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+  40066f:	00 
+  400670:	83 ee 61             	sub    $0x61,%esi # this is the start of the while loop
+  400673:	40 80 fe 19          	cmp    $0x19,%sil # we want to compare if current character is an alphabet char or not.
+  400677:	77 3f                	ja     4006b8 <check_password+0x78> #return 0.
+  400679:	40 0f b6 f6          	movzbl %sil,%esi #isolate current character. (to *s)
+  40067d:	44 89 ca             	mov    %r9d,%edx #edx=0
+  400680:	48 89 f0             	mov    %rsi,%rax # rax is y
+  400683:	48 f7 d0             	not    %rax # rax=-rax-1 .. 
+  400686:	49 f7 f0             	div    %r8 # divide current rax:rdx with 26 
+  400689:	48 39 c8             	cmp    %rcx,%rax #rax is y.. check if x>y/26.( we want to make sure our current character is between and a and z )
+  40068c:	72 2a                	jb     4006b8 <check_password+0x78># if true , return 0.
+  40068e:	48 8d 04 49          	lea    (%rcx,%rcx,2),%rax #y=3x
+  400692:	48 83 c7 01          	add    $0x1,%rdi #s++
+  400696:	48 8d 04 81          	lea    (%rcx,%rax,4),%rax  y= 13x
+  40069a:	48 8d 0c 46          	lea    (%rsi,%rax,2),%rcx #this whole rax to rcx thing is just to do x*=26;
+  40069e:	0f b6 37             	movzbl (%rdi),%esi #update *s
+  4006a1:	40 84 f6             	test   %sil,%sil # check if *s is nullptr.
+  4006a4:	75 ca                	jne    400670 <check_password+0x30>#
+  4006a6:	31 c0                	xor    %eax,%eax
+  4006a8:	48 3b 0d a1 29 20 00 	cmp    0x2029a1(%rip),%rcx        # 603050 <foo>
+  4006af:	0f 94 c0             	sete   %al #return al=(foo==x)? 1:0; yes!!
+  4006b2:	c3                   	retq   
+  4006b3:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+## this is return 0
+  4006b8:	31 c0                	xor    %eax,%eax
+  4006ba:	c3                   	retq   
+#### insert decription here.
+  4006bb:	31 c9                	xor    %ecx,%ecx #x=0 e
+  4006bd:	eb e7                	jmp    4006a6 <check_password+0x66> #compare Higher 32 bits of rcx with foo
+
+  
+ 
+ 
+  
+
