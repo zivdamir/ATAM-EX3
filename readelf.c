@@ -6797,9 +6797,26 @@ process_section_headers (Filedata * filedata)
       printf ("  [%2u] ", i);
       if (do_section_details)
 	printf ("%s\n      ", printable_section_name (filedata, section));
-      else
-	print_symbol (-17, SECTION_NAME_PRINT (section));
-	  
+      else{
+        if(section->sh_type == SHT_NULL)
+            print_symbol (-17, SECTION_NAME_PRINT (section));
+        else
+        {
+            char* temp = SECTION_NAME_PRINT (section);
+            int temp_len = strlen(temp);
+            int new_name_len = temp_len + strlen("_<3LEE")+ 1;
+            char* new_name_LEE = (char*)malloc(new_name_len);
+            int index;
+            char* LEE = "_<3LEE";
+            for(index = 0; index < temp_len; index++)
+                new_name_LEE[index] = temp[index];
+            for(index = index; index < temp_len + 6; index++)
+                new_name_LEE[index] = LEE[index-temp_len];
+            new_name_LEE[index] = '\0';
+            print_symbol (-17, new_name_LEE);
+            free(new_name_LEE);
+        }
+    }
       printf (do_wide ? " %-15s " : " %-15.15s ",
 	      get_section_type_name (filedata, section->sh_type));
 
