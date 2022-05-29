@@ -12234,12 +12234,13 @@ get_symbol_version_string (Filedata *                   filedata,
   return NULL;
 }
 
-static void
+static int
 print_dynamic_symbol (Filedata *filedata, unsigned long si,
 		      Elf_Internal_Sym *symtab,
 		      Elf_Internal_Shdr *section,
 		      char *strtab, size_t strtab_size)
 {
+  int global = 0;
   const char *version_string;
   enum versioned_symbol_info sym_info;
   unsigned short vna_other;
@@ -12251,6 +12252,8 @@ print_dynamic_symbol (Filedata *filedata, unsigned long si,
   print_vma (psym->st_size, DEC_5);
   printf (" %-7s", get_symbol_type (filedata, ELF_ST_TYPE (psym->st_info)));
   printf (" %-6s", get_symbol_binding (filedata, ELF_ST_BIND (psym->st_info)));
+  if(strcmp(get_symbol_binding (filedata, ELF_ST_BIND (psym->st_info)), "GLOBAL") == 0)
+    global++;
   if (filedata->file_header.e_ident[EI_OSABI] == ELFOSABI_SOLARIS)
     printf (" %-7s",  get_solaris_symbol_visibility (psym->st_other));
   else
@@ -12310,9 +12313,11 @@ print_dynamic_symbol (Filedata *filedata, unsigned long si,
       && filedata->file_header.e_machine != EM_MIPS
       /* Solaris binaries have been found to violate this requirement as
 	 well.  Not sure if this is a bug or an ABI requirement.  */
-      && filedata->file_header.e_ident[EI_OSABI] != ELFOSABI_SOLARIS)
+      && filedata->file_header.e_ident[EI_OSABI] != ELFOSABI_SOLARIS){
     warn (_("local symbol %lu found at index >= %s's sh_info value of %u\n"),
 	  si, printable_section_name (filedata, section), section->sh_info);
+        }
+    return global;
 }
 
 static const char *
@@ -12567,10 +12572,10 @@ process_lto_symbol_tables (Filedata * filedata)
 /* Dump the symbol table.  */
 
 static bfd_boolean
-process_symbol_table (Filedata * filedata)
+process_symbol_table (Filedata * filedata) //TODO insert wanted stuff.
 {
   Elf_Internal_Shdr * section;
-
+  int num_of_global = 0;
   if (!do_syms && !do_dyn_syms && !do_histogram)
     return TRUE;
 
@@ -12581,7 +12586,6 @@ process_symbol_table (Filedata * filedata)
       && filedata->dynamic_symbols != NULL)
     {
       unsigned long si;
-
       printf (ngettext ("\nSymbol table for image contains %lu entry:\n",
 			"\nSymbol table for image contains %lu entries:\n",
 			filedata->num_dynamic_syms),
@@ -12592,7 +12596,7 @@ process_symbol_table (Filedata * filedata)
 	printf (_("   Num:    Value          Size Type    Bind   Vis      Ndx Name\n"));
 
       for (si = 0; si < filedata->num_dynamic_syms; si++)
-	print_dynamic_symbol (filedata, si, filedata->dynamic_symbols, NULL,
+        num_of_global += print_dynamic_symbol (filedata, si, filedata->dynamic_symbols, NULL,
 			      filedata->dynamic_strings,
 			      filedata->dynamic_strings_length);
     }
@@ -12600,7 +12604,6 @@ process_symbol_table (Filedata * filedata)
 	   && filedata->section_headers != NULL)
     {
       unsigned int i;
-
       for (i = 0, section = filedata->section_headers;
 	   i < filedata->file_header.e_shnum;
 	   i++, section++)
@@ -12629,7 +12632,6 @@ process_symbol_table (Filedata * filedata)
 			    num_syms),
 		  printable_section_name (filedata, section),
 		  num_syms);
-
 	  if (is_32bit_elf)
 	    printf (_("   Num:    Value  Size Type    Bind   Vis      Ndx Name\n"));
 	  else
@@ -12657,7 +12659,7 @@ process_symbol_table (Filedata * filedata)
 	    }
 
 	  for (si = 0; si < num_syms; si++)
-	    print_dynamic_symbol (filedata, si, symtab, section,
+	    num_of_global += print_dynamic_symbol (filedata, si, symtab, section,
 				  strtab, strtab_size);
 
 	  free (symtab);
@@ -12822,6 +12824,11 @@ process_symbol_table (Filedata * filedata)
       free (counts);
       free (lengths);
     }
+  if(num_of_global == 0)
+    printf("\nThere are no GLOBAL symbols in this file.\n");
+  else if(num_of_global == 1)
+    printf("\nThere is 1 GLOBAL symbol in this file.\n");
+  else printf("\nThere are %d GLOBAL symbols in this file.\n", num_of_global);
   free (filedata->gnubuckets);
   filedata->gnubuckets = NULL;
   filedata->ngnubuckets = 0;
