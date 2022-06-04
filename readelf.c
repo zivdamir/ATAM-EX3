@@ -12575,7 +12575,7 @@ static bfd_boolean
 process_symbol_table (Filedata * filedata) //TODO insert wanted stuff.
 {
   Elf_Internal_Shdr * section;
-  int num_of_global = 0;
+  int num_of_dyn_global = 0;
   if (!do_syms && !do_dyn_syms && !do_histogram)
     return TRUE;
 
@@ -12596,9 +12596,15 @@ process_symbol_table (Filedata * filedata) //TODO insert wanted stuff.
 	printf (_("   Num:    Value          Size Type    Bind   Vis      Ndx Name\n"));
 
       for (si = 0; si < filedata->num_dynamic_syms; si++)
-        num_of_global += print_dynamic_symbol (filedata, si, filedata->dynamic_symbols, NULL,
+        num_of_dyn_global += print_dynamic_symbol (filedata, si, filedata->dynamic_symbols, NULL,
 			      filedata->dynamic_strings,
 			      filedata->dynamic_strings_length);
+      if(num_of_dyn_global == 0)
+        printf("\nThere are no GLOBAL symbols in this file.\n");
+      else if(num_of_dyn_global == 1)
+        printf("\nThere is 1 GLOBAL symbol in this file.\n");
+      else printf("\nThere are %d GLOBAL symbols in this file.\n", num_of_dyn_global);
+
     }
   else if ((do_dyn_syms || (do_syms && !do_using_dynamic))
 	   && filedata->section_headers != NULL)
@@ -12657,10 +12663,15 @@ process_symbol_table (Filedata * filedata) //TODO insert wanted stuff.
                                           _("string table"));
 	      strtab_size = strtab != NULL ? string_sec->sh_size : 0;
 	    }
-
+        num_of_dyn_global = 0;
 	  for (si = 0; si < num_syms; si++)
-	    num_of_global += print_dynamic_symbol (filedata, si, symtab, section,
+	    num_of_dyn_global += print_dynamic_symbol (filedata, si, symtab, section,
 				  strtab, strtab_size);
+    if(num_of_dyn_global == 0)
+        printf("\nThere are no GLOBAL symbols in this file.\n");
+      else if(num_of_dyn_global == 1)
+        printf("\nThere is 1 GLOBAL symbol in this file.\n");
+      else printf("\nThere are %d GLOBAL symbols in this file.\n", num_of_dyn_global);
 
 	  free (symtab);
 	  if (strtab != filedata->string_table)
@@ -12824,11 +12835,6 @@ process_symbol_table (Filedata * filedata) //TODO insert wanted stuff.
       free (counts);
       free (lengths);
     }
-  if(num_of_global == 0)
-    printf("\nThere are no GLOBAL symbols in this file.\n");
-  else if(num_of_global == 1)
-    printf("\nThere is 1 GLOBAL symbol in this file.\n");
-  else printf("\nThere are %d GLOBAL symbols in this file.\n", num_of_global);
   free (filedata->gnubuckets);
   filedata->gnubuckets = NULL;
   filedata->ngnubuckets = 0;
